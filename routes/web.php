@@ -17,6 +17,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/home', function () {
+        return Inertia::render('Home');
+    })->name('home');
+    Route::get('/social', function () {
+        return Inertia::render('Social');
+    })->name('social');
+    Route::get('/battle', function () {
+        return Inertia::render('Battle');
+    })->name('battle');
+    Route::get('/cards', function () {
+        return Inertia::render('Cards');
+    })->name('cards');
 });
 
 require __DIR__.'/auth.php';
