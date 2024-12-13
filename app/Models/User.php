@@ -45,4 +45,44 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * ユーザーが作成したルーム
+     */
+    public function createdRooms()
+    {
+        return $this->hasMany(Room::class, 'created_by');
+    }
+
+    /**
+     * ユーザーが参加しているルームメンバーシップ
+     */
+    public function roomMemberships()
+    {
+        return $this->hasMany(RoomMember::class);
+    }
+
+    /**
+     * ユーザーがプレイヤー1として参加したマッチ
+     */
+    public function matchesAsPlayer1()
+    {
+        return $this->hasMany(MatchModel::class, 'player1_id');
+    }
+
+    /**
+     * ユーザーがプレイヤー2として参加したマッチ
+     */
+    public function matchesAsPlayer2()
+    {
+        return $this->hasMany(MatchModel::class, 'player2_id');
+    }
+
+    /**
+     * ユーザーが所有するデッキ
+     */
+    public function decks()
+    {
+        return $this->hasMany(Deck::class, 'owner_id');
+    }
 }
