@@ -1,8 +1,8 @@
-name: Laravel Sail CI
+name: Laravel tests
 
 on:
   push:
-    branches: [ main,ci ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
