@@ -39,6 +39,10 @@
         }
     },
     "scripts": {
+        "post-install-cmd": [
+            "chmod -R 755 bootstrap\/cache",
+            "php artisan cache:clear"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
