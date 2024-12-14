@@ -42,9 +42,8 @@ Route::middleware('auth')->group(function () {
     //ルーム
     Route::post('/room/create', [RoomController::class, 'create']);
     Route::post('/room/join', [RoomController::class, 'join']);
-    Route::get('/room/{room}', function ($room) {
-        return Inertia::render('room/BattleRoom', ['room' => $room]);
-    })->name('battle.room');
+    Route::get('/room/{room}', [RoomController::class, 'show'])->name('battle.room');
+    Route::get('/api/room/{room}/users', [RoomController::class, 'getUsers']);
 });
 
 require __DIR__.'/auth.php';
