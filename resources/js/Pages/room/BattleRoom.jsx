@@ -31,8 +31,7 @@ export default function BattleRoom({ room, initialUsers, user_id }) {
         // 自分の選択したカードのデータを含めて送信
         console.log("judge");
         axios.post(`/api/room/${room.id}/judge`, { 
-            turn, 
-            selectedCard 
+            turn:turn
         })
         .then(response => {
             if (response.data.winner) {
@@ -48,7 +47,7 @@ export default function BattleRoom({ room, initialUsers, user_id }) {
     };
     
     const handleCardSelected = (card) => {
-        setSelectedCard(card);
+        setSelectedCard(card.id);
         setCardSelected(true); // カードが選択されたことを記録
     };
 

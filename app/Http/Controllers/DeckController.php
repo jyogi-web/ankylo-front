@@ -13,7 +13,7 @@ class DeckController extends Controller
     {
         $cards = DeckCard::where('deck_id', $deckId)
             ->join('cards', 'deck_cards.card_id', '=', 'cards.id')
-            ->select('deck_cards.id', 'cards.name', 'cards.type', 'cards.power')
+            ->select('deck_cards.card_id', 'cards.name', 'cards.type', 'cards.power')
             ->get();
 
         return Response::json($cards);

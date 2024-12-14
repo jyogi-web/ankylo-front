@@ -4,6 +4,7 @@ import axios from 'axios';
 const DeckCardList = ({ deckId, roomId, userId, turn, onCardSelected }) => {
     const [cards, setCards] = useState([]);
 
+    //デッキの更新
     useEffect(() => {
         axios.get(`/api/decks/${deckId}/cards`)
             .then(response => {
@@ -19,12 +20,12 @@ const DeckCardList = ({ deckId, roomId, userId, turn, onCardSelected }) => {
         axios.post(`/api/room/${roomId}/select-card`,
             {
             user_id: userId,
-            card_id: card.id,
-            turn: {turn}
+            card_id: card.card_id,
+            turn: turn
         })
         .then(response => {
             console.log('judge');
-            onCardSelected(card);
+            onCardSelected(card.card_id);
         })
         .catch(error => {
             console.error('Error selecting card:', error);
@@ -38,11 +39,11 @@ const DeckCardList = ({ deckId, roomId, userId, turn, onCardSelected }) => {
                 {cards.length > 0 ? (
                     cards.map((card) => (
                         <li
-                            key={card.id}
+                            key={card.card_id}
                             onClick={() => handleCardClick(card)}
                             className="p-4 bg-gray-100 rounded-lg shadow-md cursor-pointer hover:bg-gray-200"
                         >
-                            <div className="font-semibold">{card.name}</div>
+                            <div className="font-semibold">{card.card_id}{card.name}</div>
                             <div className="text-sm text-gray-600">{card.type}</div>
                             <div className="text-sm text-gray-600">偏差値 {card.power}</div>
                         </li>
