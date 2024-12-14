@@ -1,5 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+import DeckCardList from '../../Components/DeckCardList';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -35,12 +36,21 @@ export default function BattleRoom({ room, initialUsers }) {
                                         <li key={user.id}>{user.name}</li>
                                     ))
                                 ) : (
-                                    <li>No users in this room</li>
+                                    <li>更新中</li>
                                 )}
                             </ul>
                         </div>
                     </div>
                 </div>
+                
+                {/* <div>ここに自分のカード表示（コンポーネントで作成）</div> */}
+                <DeckCardList
+                    deckId = {1}
+                />
+                
+                
+                {/* <div>実行ボタンー＞対戦結果コンポネント表示</div> */}
+
             </div>
         </>
     );
