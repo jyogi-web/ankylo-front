@@ -19,5 +19,14 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+        //作成したSeederを一気に実行させる
+        // ./vendor/bin/sail php artisan migrate:refresh --seed
+        $this->call([
+            CardSeeder::class,
+            DeckSeeder::class,
+            DeckCardSeeder::class,
+            UserSeeder::class,
+        ]);
     }
+
 }
