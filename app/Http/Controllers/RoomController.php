@@ -54,6 +54,11 @@ class RoomController extends Controller
             // 既に他のルームに参加している場合、その情報を削除
             RoomMember::where('user_id', $userId)->delete();
 
+            // DeckCardsテーブルのpositionカラムをnullで初期化する
+            DB::table('deck_cards')
+            ->where('deck_id', $userId)
+            ->update(['position' => null]);
+
             $roomMember = new RoomMember();
             $roomMember->room_id = $roomId;
             $roomMember->user_id = $userId;
