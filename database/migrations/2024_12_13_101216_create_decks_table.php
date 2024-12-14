@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('decks', function (Blueprint $table) {
             $table->id(); // id INT PRIMARY KEY AUTO_INCREMENT
             $table->string('name', 100)->unique(); // name VARCHAR(100) UNIQUE NOT NULL
-            $table->text('description')->nullable(); // description TEXT NULLABLE
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade'); // owner_id INT FOREIGN KEY users.id NOT NULL
-            $table->boolean('is_public')->default(true); // is_public BOOLEAN DEFAULT TRUE NOT NULL
             $table->timestamps(); // created_at と updated_at DATETIME
         });
     }

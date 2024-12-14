@@ -15,10 +15,31 @@ class DeckCardSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        DeckCard:create([
-            'deck_id'=>'',
-            'quantity'
-        ])
+        //サンプルデッキ
+        DeckCard::create([
+            'deck_id'=>1,
+            'position'=>null,
+            'card_id'=>33,
+        ]);
+        DeckCard::create([
+            'deck_id'=>1,
+            'position'=>null,
+            'card_id'=>77,
+        ]);
+        DeckCard::create([
+            'deck_id'=>1,
+            'position'=>null,
+            'card_id'=>93,
+        ]);
+        DeckCard::create([
+            'deck_id'=>1,
+            'position'=>null,
+            'card_id'=>112,
+        ]);
+        DeckCard::create([
+            'deck_id'=>1,
+            'position'=>null,
+            'card_id'=>2,
+        ]);
     }
 }
