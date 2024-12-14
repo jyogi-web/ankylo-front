@@ -1,6 +1,7 @@
 <?php
 
 //コントローラー
+use App\Http\Controllers\UserCardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MatchingController;
 use App\Http\Controllers\RoomController;
@@ -36,6 +37,8 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Cards');
     })->name('cards');
 
+    Route::get('/cards',[CardController::class,'show']);
+
     //マッチング関係
     Route::post('/match', [MatchingController::class, 'match']);
 
@@ -44,6 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/room/join', [RoomController::class, 'join']);
     Route::get('/room/{room}', [RoomController::class, 'show'])->name('battle.room');
     Route::get('/api/room/{room}/users', [RoomController::class, 'getUsers']);
+
+
 });
 
 require __DIR__.'/auth.php';
