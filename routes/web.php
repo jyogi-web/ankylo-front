@@ -1,6 +1,9 @@
 <?php
 
+//コントローラー
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MatchingController;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -17,6 +20,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    //ページ
     Route::get('/home', function () {
         return Inertia::render('Home');
     })->name('home');
@@ -29,6 +34,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/cards', function () {
         return Inertia::render('Cards');
     })->name('cards');
+
+    //マッチング関係
+    Route::post('/match', [MatchingController::class, 'match']);
+
+
 });
 
 require __DIR__.'/auth.php';

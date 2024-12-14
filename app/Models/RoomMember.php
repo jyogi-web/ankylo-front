@@ -17,6 +17,8 @@ class RoomMember extends Model
         'role', // 役割カラム（例: 'leader', 'participant'）を追加
     ];
 
+    public $timestamps = false; 
+
     /**
      * ルームへのメンバーシップ
      */
