@@ -16,6 +16,7 @@ class Card extends Model
         'description',
         'type',
         'power',
+        'rank',
         // 'cost',        // 追加カラム例: カードのコスト
         // 'rarity',      // 追加カラム例: カードのレアリティ
         // 'image_url',   // 追加カラム例: カードの画像URL
