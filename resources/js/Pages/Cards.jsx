@@ -25,8 +25,14 @@ export default function Cards() {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     {user_cards.map((user_card) => (
-                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                            {user_card.id}
+                        <div
+                            key={user_card.id}
+                            className="overflow-hidden bg-white shadow-sm sm:rounded-lg p-4 mb-4"
+                        >
+                            <h3 className="text-lg font-bold">
+                                {user_card.card?.name ?? "No Card Name"}
+                            </h3>
+                            <p>{user_card.card?.description ?? "No Description"}</p>
                         </div>
                     ))}
                 </div>
