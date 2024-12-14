@@ -4,22 +4,53 @@ import DeckCardList from '../../Components/DeckCardList';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function BattleRoom({ room, initialUsers,user_id }) {
+export default function BattleRoom({ room, initialUsers, user_id }) {
     const [users, setUsers] = useState(initialUsers || []);
+    const [selectedCard, setSelectedCard] = useState(null);
+    const [turn, setTurn] = useState(room.turn);
+    const [winner, setWinner] = useState(null);
+    const [cardSelected, setCardSelected] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            axios.get(`/api/room/${room.id}/users`)
+            console.log("setInterval");
+            axios.get(`/api/room/${room.id}/check-all-selected`)
                 .then(response => {
-                    setUsers(response.data);
+                    if (response.data.allSelected) {
+                        // 全員選択済みなら判定ロジックへ
+                        handleJudge();
+                    }
                 })
-                .catch(error => {
-                    console.error('Error fetching users:', error);
-                });
-        }, 1000); // 1秒ごとに更新
-
+                .catch(error => console.error(error));
+        }, 1000); // 1秒間隔でチェック
+    
         return () => clearInterval(interval);
     }, [room.id]);
+    
+    const handleJudge = () => {
+        // 自分の選択したカードのデータを含めて送信
+        console.log("judge");
+        axios.post(`/api/room/${room.id}/judge`, { 
+            turn, 
+            selectedCard 
+        })
+        .then(response => {
+            if (response.data.winner) {
+                setWinner(response.data.winner); // 勝者を更新
+                setTurn(turn + 1); // ターンを進める
+                setCardSelected(false); // ターンが更新されたらカード選択をリセット
+                setSelectedCard(null); // 選択したカードもリセット
+            }
+        })
+        .catch(error => {
+            console.error('Error judging turn:', error);
+        });
+    };
+    
+    const handleCardSelected = (card) => {
+        setSelectedCard(card);
+        setCardSelected(true); // カードが選択されたことを記録
+    };
 
     return (
         <>
@@ -39,18 +70,22 @@ export default function BattleRoom({ room, initialUsers,user_id }) {
                                     <li>更新中</li>
                                 )}
                             </ul>
+                            <h4>Current Turn: {turn}</h4>
+                            {winner && <h4>Winner: {winner}</h4>}
                         </div>
                     </div>
                 </div>
                 
-                {/* <div>ここに自分のカード表示（コンポーネントで作成）</div> */}
-                <DeckCardList
-                    deckId={user_id}
-                />
-                
-                
-                {/* <div>実行ボタンー＞対戦結果コンポネント表示</div> */}
-
+                {/* 自分のカード表示 */}
+                {!cardSelected && (
+                    <DeckCardList
+                        deckId={user_id}
+                        roomId={room.id}
+                        userId={user_id}
+                        turn={turn}
+                        onCardSelected={handleCardSelected}
+                    />
+                )}
             </div>
         </>
     );
