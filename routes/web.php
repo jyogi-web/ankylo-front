@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Cards');
     })->name('cards');
 
-    Route::get('api/cards',[UserCardController::class,'show'])->name('api.cards');
+    Route::get('api/cards',[UserCardController::class,'show']);
 
     //マッチング関係
     Route::post('/match', [MatchingController::class, 'match']);

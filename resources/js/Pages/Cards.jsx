@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
+import SikakuCard from '@/Components/SikakuCard';
 
 export default function Cards() {
     const [user_cards, setUserCards] = useState([]);//データを保存する状態
@@ -23,17 +24,17 @@ export default function Cards() {
         >
             <Head title="Cards" />
             <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div className="flex flex-wrap gap-6 justify-center">
                     {user_cards.map((user_card) => (
-                        <div
-                            key={user_card.id}
-                            className="overflow-hidden bg-white shadow-sm sm:rounded-lg p-4 mb-4"
-                        >
-                            <h3 className="text-lg font-bold">
-                                {user_card.card?.name ?? "No Card Name"}
-                            </h3>
-                            <p>{user_card.card?.description ?? "No Description"}</p>
-                        </div>
+                        <SikakuCard
+                            key={user_card.id} // IDをキーとして追加
+                            rank={user_card.card?.rank ?? "No Card Name"}
+                            power={user_card.card?.power ?? "No Card Name"}
+                            title={user_card.card?.name ?? "No Card Name"}
+                            genre={user_card.card?.type ?? "No Card Name"}
+                            weakGenre={user_card.card?.type ?? "No Card Name"}
+                            description={user_card.card?.description ?? "No Description"}
+                        />
                     ))}
                 </div>
             </div>
