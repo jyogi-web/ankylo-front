@@ -11,7 +11,7 @@ export default function Welcome() {
                     <h1 className="text-4xl sm:text-6xl font-extrabold text-white text-center px-4">
                         ShikakuMountingCardBattlePokets
                     </h1>
-
+                    <br></br><br></br>
                     <h2 className="text-2xl sm:text-4xl font-extrabold text-white text-center px-4">
                         タップでスタート
                     </h2>
