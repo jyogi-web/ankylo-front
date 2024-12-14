@@ -8,9 +8,24 @@ export default function MatchingRoom() {
     const [room, setRoom] = useState(null);
     const [error, setError] = useState(null);
 
-    const handleMatch = async () => {
-        setLoading(true);
-        setError(null);
+    // const handleMatch = async () => {
+    //     setLoading(true);
+    //     setError(null);
+    //     try {
+    //         const response = await axios.post('/matching');
+    //         setRoom(response.data.room);
+    //     } catch (error) {
+    //         console.error('Error during matching:', error);
+    //         setError('マッチング中にエラーが発生しました。');
+    //     } finally {
+    //         //マッチングボタンを押したときに実行したい処理
+    //     }
+    // };
+
+    //const handleMatchCheck =  
+    //todo ここにroomstatusを確認する処理を書くのとチェック用の処理をMatchingcontrollerに追加、エンドポイントを追加
+
+    const handleMatch = async() => {
         try {
             const response = await axios.post('/matching');
             setRoom(response.data.room);
@@ -20,10 +35,7 @@ export default function MatchingRoom() {
         } finally {
             //マッチングボタンを押したときに実行したい処理
         }
-    };
-
-    //const handleMatchCheck =  
-    //todo ここにroomstatusを確認する処理を書くのとチェック用の処理をMatchingcontrollerに追加、エンドポイントを追加
+    }
 
     return (
         <AuthenticatedLayout
@@ -37,7 +49,7 @@ export default function MatchingRoom() {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">
+                        {/* <div className="p-6 bg-white border-b border-gray-200">
                             <button
                                 onClick={handleMatch}
                                 className="px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-700"
@@ -56,7 +68,10 @@ export default function MatchingRoom() {
                                     <p>Status: {room.status}</p>
                                 </div>
                             )}
-                        </div>
+                        </div> */}
+
+                        {/* room_id,deckidを入れる */}
+
                     </div>
                 </div>
             </div>
