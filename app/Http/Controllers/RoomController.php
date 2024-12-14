@@ -80,7 +80,7 @@ class RoomController extends Controller
     {
         $room = Room::findOrFail($roomId);
         $users = User::whereIn('id', RoomMember::where('room_id', $roomId)->pluck('user_id'))->get();
-        $user_id = Auth::id(); // ログインしているユーザーID��取得
+        $user_id = Auth::id(); // ログインしているユーザーID���取得
 
         return Inertia::render('room/BattleRoom', [
             'room' => $room,
@@ -97,16 +97,24 @@ class RoomController extends Controller
 
     public function selectCard(Request $request, $roomId)
     {
-        $roomId = $request->input('room_id');
+        \Log::info('Updating has_selected_card for user');
         $userId = auth()->id();
         $cardId = $request->input('card_id');
+        $turn = $request->input('turn');
+
+        \Log::info('Updating has_selected_card for user', [
+            'card_id' => $cardId,
+            'room_id' => $roomId,
+            'user_id' => $userId,
+            'turn' => $turn,
+        ]);
     
         // カード選択ロジック（必要に応じてカードのチェックなどを実施）
+        // データベースにカード選択状況を保存
         DB::table('room_members')
             ->where('room_id', $roomId)
             ->where('user_id', $userId)
             ->update(['has_selected_card' => true]);
-    
         return response()->json(['success' => true]);
     }
 
@@ -127,10 +135,10 @@ class RoomController extends Controller
         
     
         // データベースにカード選択状況を保存
-        DB::table('room_members')
-            ->where('room_id', $roomId)
-            ->where('user_id', $userId)
-            ->update(['has_selected_card' => true]);
+        // DB::table('room_members')
+        //     ->where('room_id', $roomId)
+        //     ->where('user_id', $userId)
+        //     ->update(['has_selected_card' => true]);
         
         // 他のプレイヤーも選択済みか確認
         $allSelected = DB::table('room_members')
@@ -161,12 +169,12 @@ class RoomController extends Controller
     
             // 勝者を判定
             $winner = null;
-            if ($card1->power > $card2->power) {
+            if($card1->power == $card2->power){
+                $winner = 'Draw';
+            } elseif ($card1->power > $card2->power) {
                 $winner = User::find($card1->deck_id)->name;
             } elseif ($card1->power < $card2->power) {
                 $winner = User::find($card2->deck_id)->name;
-            } else {
-                $winner = 'Draw';
             }
     
             // ターンを1つ増やし、カード選択状態をリセット

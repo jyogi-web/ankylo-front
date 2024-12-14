@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/room/join', [RoomController::class, 'join']);
     Route::get('/room/{room}', [RoomController::class, 'show'])->name('battle.room');
     Route::get('/api/room/{room}/users', [RoomController::class, 'getUsers']);
-    Route::post('/api/room/{room}/select-card', [RoomController::class, 'selectCard']);
+    Route::post('/api/room/{roomId}/select-card', [RoomController::class, 'selectCard']);
     
     Route::get('/api/decks/{deck}/cards', [DeckController::class, 'getCards']);
     // 全員がカードを選択したか確認するルート

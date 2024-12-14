@@ -16,10 +16,11 @@ const DeckCardList = ({ deckId, roomId, userId, turn, onCardSelected }) => {
 
     const handleCardClick = (card) => {
         console.log('select-card');
-        axios.post(`/api/room/${roomId}/select-card`, {
+        axios.post(`/api/room/${roomId}/select-card`,
+            {
             user_id: userId,
             card_id: card.id,
-            turn: turn
+            turn: {turn}
         })
         .then(response => {
             console.log('judge');
