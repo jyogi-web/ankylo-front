@@ -41,5 +41,32 @@ class DeckCardSeeder extends Seeder
             'position'=>null,
             'card_id'=>2,
         ]);
+
+        //サンプルデッキ2
+        DeckCard::create([
+            'deck_id'=>2,
+            'position'=>null,
+            'card_id'=>34,
+        ]);
+        DeckCard::create([
+            'deck_id'=>2,
+            'position'=>null,
+            'card_id'=>78,
+        ]);
+        DeckCard::create([
+            'deck_id'=>2,
+            'position'=>null,
+            'card_id'=>94,
+        ]);
+        DeckCard::create([
+            'deck_id'=>2,
+            'position'=>null,
+            'card_id'=>113,
+        ]);
+        DeckCard::create([
+            'deck_id'=>2,
+            'position'=>null,
+            'card_id'=>3,
+        ]);
     }
 }

@@ -20,5 +20,10 @@ class DeckSeeder extends Seeder
             'name'=>'サンプルデッキ',
             'owner_id'=>1
         ]);
+
+        Deck::create([
+            'name'=>'サンプルデッキ2',
+            'owner_id'=>2
+        ]);
     }
 }
