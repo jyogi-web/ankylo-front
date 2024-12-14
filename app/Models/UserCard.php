@@ -7,9 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class UserCard extends Model
 {
     //
-}
-
-public function user()
-{
-    return $this->belongTo(User::class);
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
