@@ -49,7 +49,7 @@ class RoomController extends Controller
 
             $room = Room::findOrFail($roomId);
 
-            // 既に他のルームに参��している場合、その情報を削除
+            // 既に他のルームに参加している場合、その情報を削除
             RoomMember::where('user_id', $userId)->delete();
 
             $roomMember = new RoomMember();
@@ -77,9 +77,11 @@ class RoomController extends Controller
     {
         $room = Room::findOrFail($roomId);
         $users = User::whereIn('id', RoomMember::where('room_id', $roomId)->pluck('user_id'))->get();
+        $user_id = Auth::id(); // ログインしているユーザーIDを取得
 
         return Inertia::render('room/BattleRoom', [
             'room' => $room,
+            'user_id' => $user_id,
             'users' => $users,
         ]);
     }

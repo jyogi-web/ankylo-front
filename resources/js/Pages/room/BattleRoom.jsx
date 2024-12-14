@@ -4,7 +4,7 @@ import DeckCardList from '../../Components/DeckCardList';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function BattleRoom({ room, initialUsers }) {
+export default function BattleRoom({ room, initialUsers,user_id }) {
     const [users, setUsers] = useState(initialUsers || []);
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export default function BattleRoom({ room, initialUsers }) {
                 
                 {/* <div>ここに自分のカード表示（コンポーネントで作成）</div> */}
                 <DeckCardList
-                    deckId = {1}
+                    deckId={user_id}
                 />
                 
                 
