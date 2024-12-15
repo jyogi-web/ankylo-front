@@ -25,7 +25,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
+    - name: Cleanup PHP environment
+      run: |
+        sudo apt-get clean
+        sudo apt-get update
+        sudo rm -rf /usr/local/php*
+        sudo rm -rf /etc/php*
+        sudo apt-get install -y software-properties-common
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:

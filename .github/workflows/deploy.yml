@@ -23,20 +23,13 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
-
-      - name: System Information
+      - name: Cleanup PHP environment
         run: |
-          uname -a
-          lsb_release -a
-          php -v || true
-          - name: Cleanup PHP environment
-          run: |
-            sudo apt-get clean
-            sudo apt-get update
-            sudo rm -rf /usr/local/php*
-            sudo rm -rf /etc/php*
-            sudo apt-get install -y software-properties-common
-
+          sudo apt-get clean
+          sudo apt-get update
+          sudo rm -rf /usr/local/php*
+          sudo rm -rf /etc/php*
+          sudo apt-get install -y software-properties-common
       - name: Clear PHP Installation
         run: |
           sudo rm -rf /usr/local/php* || true
