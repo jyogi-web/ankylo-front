@@ -72,6 +72,11 @@ jobs:
           echo "DB_USERNAME=$DB_USERNAME" >> .env
           echo "DB_PASSWORD=$DB_PASSWORD" >> .env
 
+          php artisan config:clear
+          php artisan cache:clear
+
+          gcloud app deploy app.yaml --quiet --no-cache --project ${PROJECT_ID}
+
       - name: Run Database Migration
         run: |
           wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
