@@ -52,7 +52,7 @@ jobs:
           APP_KEY: ${{ secrets.APP_KEY }}
         run: |
           cp .env.example .env
-          sed -i "s|APP_KEY=|APP_KEY=${APP_KEY}|g" .env
+          echo "APP_KEY=${APP_KEY}" >> .env
           cp secret.yaml.example secret.yaml
           sed -i "s|__DB_PASSWORD__|${DB_PASSWORD}|g" secret.yaml
           sed -i "s|__DB_USERNAME__|${DB_USERNAME}|g" secret.yaml
