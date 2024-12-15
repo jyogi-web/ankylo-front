@@ -53,10 +53,10 @@ jobs:
         run: |
           cp .env.example .env
           cp secret.yaml.example secret.yaml
-          sed -i -e "s/__DB_PASSWORD__/$DB_PASSWORD/" secret.yaml
-          sed -i -e "s/__DB_USERNAME__/$DB_USERNAME/" secret.yaml
-          sed -i -e "s/__DB_HOST__/$DB_HOST/" secret.yaml
-          sed -i -e "s/__APP_KEY__/$APP_KEY/" secret.yaml
+          sed -i "s|__DB_PASSWORD__|${DB_PASSWORD}|g" secret.yaml
+          sed -i "s|__DB_USERNAME__|${DB_USERNAME}|g" secret.yaml
+          sed -i "s|__DB_HOST__|${DB_HOST}|g" secret.yaml
+          sed -i "s|__APP_KEY__|${APP_KEY}|g" secret.yaml
           gcloud app deploy app.yaml --quiet --no-cache --project ${PROJECT_ID}
 
       - name: Run Database Migration
