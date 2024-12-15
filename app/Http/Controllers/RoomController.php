@@ -36,7 +36,7 @@ class RoomController extends Controller
         $roomMember->user_id = $userId;
         $roomMember->save();
 
-        return $room;
+        return Inertia::location(route('battle.room', ['room' => $room->id]));
     }
 
     /**
