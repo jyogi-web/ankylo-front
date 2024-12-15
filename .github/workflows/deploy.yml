@@ -42,6 +42,16 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: composer install --no-dev --optimize-autoloader
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
       - name: Deploy to App Engine
         env:
           CI: true
@@ -51,17 +61,20 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           APP_KEY: ${{ secrets.APP_KEY }}
         run: |
+          sed -i "s|\${APP_KEY}|${APP_KEY}|g" app.yaml
+          sed -i "s|\${DB_USERNAME}|${DB_USERNAME}|g" app.yaml
+          sed -i "s|\${DB_PASSWORD}|${DB_PASSWORD}|g" app.yaml
+
           cp .env.example .env
           echo "APP_KEY=${APP_KEY}" >> .env
           echo "DB_CONNECTION=mysql" >> .env
           echo "DB_HOST=$DB_HOST" >> .env
           echo "DB_USERNAME=$DB_USERNAME" >> .env
           echo "DB_PASSWORD=$DB_PASSWORD" >> .env
-          cp secret.yaml.example secret.yaml
-          sed -i "s|__DB_PASSWORD__|${DB_PASSWORD}|g" secret.yaml
-          sed -i "s|__DB_USERNAME__|${DB_USERNAME}|g" secret.yaml
-          sed -i "s|__DB_HOST__|${DB_HOST}|g" secret.yaml
-          sed -i "s|__APP_KEY__|${APP_KEY}|g" secret.yaml
+
+          php artisan config:clear
+          php artisan cache:clear
+
           gcloud app deploy app.yaml --quiet --no-cache --project ${PROJECT_ID}
 
       - name: Run Database Migration

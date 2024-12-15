@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); // id INT PRIMARY KEY AUTO_INCREMENT
             $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade'); // room_id INT FOREIGN KEY rooms.id NOT NULL
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // user_id INT FOREIGN KEY users.id NOT NULL
-            $table->enum('role', ['leader', 'participant'])->default('participant'); // role ENUM('leader', 'participant') DEFAULT 'participant' NOT NULL
+            $table->boolean('has_selected_card')->default(false); //  has_selected_card BOOLEAN DEFAULT FALSE NOT NULL
             $table->timestamp('joined_at')->useCurrent(); // joined_at DATETIME DEFAULT CURRENT_TIMESTAMP
             $table->unique(['room_id', 'user_id']); // (room_id, user_id) UNIQUE
         });

@@ -15,13 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
         //作成したSeederを一気に実行させる
         // ./vendor/bin/sail php artisan migrate:refresh --seed
         $this->call([
+            UserSeeder::class,
             CardSeeder::class,
             DeckSeeder::class,
             DeckCardSeeder::class,

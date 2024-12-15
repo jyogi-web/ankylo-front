@@ -7,6 +7,7 @@ use App\Http\Controllers\MatchingController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PackController;
+use App\Http\Controllers\DeckController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -59,8 +60,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/room/join', [RoomController::class, 'join']);
     Route::get('/room/{room}', [RoomController::class, 'show'])->name('battle.room');
     Route::get('/api/room/{room}/users', [RoomController::class, 'getUsers']);
-
-
+    Route::post('/api/room/{roomId}/select-card', [RoomController::class, 'selectCard']);
+    
+    Route::get('/api/decks/{deck}/cards', [DeckController::class, 'getCards']);
+    // 全員がカードを選択したか確認するルート
+    Route::get('/api/room/{roomId}/check-all-selected', [RoomController::class, 'checkAllSelected']);
+    Route::post('/api/room/{roomId}/judge', [RoomController::class, 'judge']);
+    Route::post('/api/room/{roomId}/selectCard',[RoomController::class, 'selectCard']);
 });
 
 require __DIR__.'/auth.php';
