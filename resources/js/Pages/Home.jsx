@@ -55,27 +55,14 @@ export default function Home({ user, hoursRemaining }) {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg p-6">
-                        <h3 className="text-lg font-bold mb-4">ガチャ機能</h3>
+                        <h3 className="text-lg font-bold mb-4">拡張パック 最強の資格</h3>
                         <p>引ける回数: {availablePackDraws}</p>
-
-                        {reward && (  // reward が存在する場合のみ表示
-                            <div className="mt-4">
-                                <h4 className="text-green-500 font-bold">ガチャ結果:</h4>
-                                <div className="flex flex-wrap gap-6 justify-center">
-                                    {reward.map((card) => (  // reward 配列を反復処理
-                                        <SikakuCard
-                                            key={card.id} // card.id をキーとして使用
-                                            rank={card.rank ?? "No Card Name"}
-                                            power={card.power ?? "No Power"}
-                                            title={card.name ?? "No Name"}
-                                            genre={card.type ?? "No Genre"}
-                                            weakGenre={card.type ?? "No Genre"}
-                                            description={card.description ?? "No Description"}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        <button
+                            onClick={handleDraw}
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                        >
+                            開封する
+                        </button>
 
                         {errorMessage && (
                             <div className="mt-4 text-red-500">
@@ -83,21 +70,33 @@ export default function Home({ user, hoursRemaining }) {
                             </div>
                         )}
 
-                        {canDraw ? (
-                            <button
-                                onClick={handleDraw}
-                                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                            >
-                                ガチャを引く
-                            </button>
-                        ) : (
+                        {!canDraw && (
                             <p className="text-gray-500 mt-4">
-                                次のガチャまであと {hoursRemaining} 時間
+                                次の開封まであと {hoursRemaining} 時間
                             </p>
                         )}
                     </div>
                 </div>
             </div>
+
+            {reward && (  // reward が存在する場合のみ表示
+                <div className="mt-8 text-center">  {/* 中央寄せ */}
+                    <h4 className="text-green-500 font-bold text-2xl mb-4">ガチャ結果:</h4>
+                    <div className="flex flex-wrap gap-6 justify-center">  {/* gap-6 と justify-center で中央に配置 */}
+                        {reward.map((card) => (  // reward 配列を反復処理
+                            <SikakuCard
+                                key={card.id} // card.id をキーとして使用
+                                rank={card.rank ?? "No Card Name"}
+                                power={card.power ?? "No Power"}
+                                title={card.name ?? "No Name"}
+                                genre={card.type ?? "No Genre"}
+                                weakGenre={card.type ?? "No Genre"}
+                                description={card.description ?? "No Description"}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     );
 }
