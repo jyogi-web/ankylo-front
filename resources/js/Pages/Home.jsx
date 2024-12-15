@@ -55,13 +55,19 @@ export default function Home({ user, hoursRemaining }) {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg p-6">
-                        <h3 className="text-lg font-bold mb-4">ガチャ機能</h3>
+                        <h3 className="text-lg font-bold mb-4">拡張パック 最強の資格</h3>
                         <p>引ける回数: {availablePackDraws}</p>
+                        <button
+                            onClick={handleDraw}
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                        >
+                            開封する
+                        </button>
 
                         {reward && (  // reward が存在する場合のみ表示
                             <div className="mt-4">
                                 <h4 className="text-green-500 font-bold">ガチャ結果:</h4>
-                                <div className="flex flex-wrap gap-6 justify-center">
+                                <div className="flex flex-wrap gap-6 justify-start">  {/* flex-wrap を調整し、justify-startで左揃えに */}
                                     {reward.map((card) => (  // reward 配列を反復処理
                                         <SikakuCard
                                             key={card.id} // card.id をキーとして使用
@@ -83,16 +89,11 @@ export default function Home({ user, hoursRemaining }) {
                             </div>
                         )}
 
-                        {canDraw ? (
-                            <button
-                                onClick={handleDraw}
-                                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                            >
-                                ガチャを引く
-                            </button>
-                        ) : (
+
+
+                        {!canDraw && (
                             <p className="text-gray-500 mt-4">
-                                次のガチャまであと {hoursRemaining} 時間
+                                次の開封まであと {hoursRemaining} 時間
                             </p>
                         )}
                     </div>
