@@ -61,32 +61,16 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           APP_KEY: ${{ secrets.APP_KEY }}
         run: |
-          cat > .env << EOL
-          APP_NAME=Laravel
-          APP_ENV=production
-          APP_KEY="${APP_KEY}"
-          APP_DEBUG=false
-          APP_URL=https://anklohack.an.r.appspot.com
+          sed -i "s|\${APP_KEY}|${APP_KEY}|g" app.yaml
+          sed -i "s|\${DB_USERNAME}|${DB_USERNAME}|g" app.yaml
+          sed -i "s|\${DB_PASSWORD}|${DB_PASSWORD}|g" app.yaml
 
-          DB_CONNECTION=mysql
-          DB_HOST="${DB_HOST}"
-          DB_PORT=3306
-          DB_DATABASE=anklo
-          DB_USERNAME="${DB_USERNAME}"
-          DB_PASSWORD="${DB_PASSWORD}"
-          EOL
-
-          cat > secret.yaml << EOL
-          env_variables:
-            DB_CONNECTION: mysql
-            DB_HOST: "${DB_HOST}"
-            DB_PORT: "3306"
-            DB_DATABASE: "anklo"
-            DB_USERNAME: "${DB_USERNAME}"
-            DB_PASSWORD: "${DB_PASSWORD}"
-            APP_KEY: "${APP_KEY}"
-          EOL
-
+          cp .env.example .env
+          echo "APP_KEY=${APP_KEY}" >> .env
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=$DB_HOST" >> .env
+          echo "DB_USERNAME=$DB_USERNAME" >> .env
+          echo "DB_PASSWORD=$DB_PASSWORD" >> .env
 
       - name: Run Database Migration
         run: |
