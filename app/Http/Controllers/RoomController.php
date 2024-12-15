@@ -53,6 +53,12 @@ class RoomController extends Controller
 
             // 既に他のルームに参加している場合、その情報を削除
             RoomMember::where('user_id', $userId)->delete();
+            
+            //roomのステートを確認してin_gameだったらbattleに戻る
+            if($room->status == 'in_game'){
+                return Inertia::location(route('battle'));
+            }
+
 
             // DeckCardsテーブルのpositionカラムをnullで初期化する
             DB::table('deck_cards')
