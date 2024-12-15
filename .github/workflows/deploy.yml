@@ -23,6 +23,7 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
+
       - name: Cleanup PHP environment
         run: |
           sudo apt-get clean
@@ -30,12 +31,7 @@ jobs:
           sudo rm -rf /usr/local/php*
           sudo rm -rf /etc/php*
           sudo apt-get install -y software-properties-common
-      - name: Clear PHP Installation
-        run: |
-          sudo rm -rf /usr/local/php* || true
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-      
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -44,12 +40,10 @@ jobs:
           coverage: none
           tools: composer:v2
           ini-values: memory_limit=512M
-        env:
-          debug: true
 
       - name: Cache Vendor
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ./vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
@@ -64,35 +58,50 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
 
       - name: Install NPM dependencies
         run: npm ci
 
       - name: Build frontend
         run: npm run build
-      - name: Deploy to App Engine
+
+      - name: Prepare Laravel Application
+        env:
+          APP_KEY: ${{ secrets.APP_KEY }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          cp .env.example .env
+          echo "APP_KEY=${APP_KEY}" >> .env
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=${DB_HOST}" >> .env
+          echo "DB_USERNAME=${DB_USERNAME}" >> .env
+          echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+          echo "APP_ENV=production" >> .env
+          echo "APP_DEBUG=false" >> .env
+          
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan view:clear
+          php artisan route:clear
+          composer dump-autoload --optimize
+          
+          chmod -R 775 storage bootstrap/cache
+
+      - name: Prepare and Deploy to App Engine
         env:
           CI: true
           PROJECT_ID: anklohack
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_HOST: ${{ secrets.DB_HOST }}
           APP_KEY: ${{ secrets.APP_KEY }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           sed -i "s|\${APP_KEY}|${APP_KEY}|g" app.yaml
           sed -i "s|\${DB_USERNAME}|${DB_USERNAME}|g" app.yaml
           sed -i "s|\${DB_PASSWORD}|${DB_PASSWORD}|g" app.yaml
-
-          cp .env.example .env
-          echo "APP_KEY=${APP_KEY}" >> .env
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=$DB_HOST" >> .env
-          echo "DB_USERNAME=$DB_USERNAME" >> .env
-          echo "DB_PASSWORD=$DB_PASSWORD" >> .env
-
-          php artisan config:clear
-          php artisan cache:clear
-
+          
           gcloud app deploy app.yaml --quiet --no-cache --project ${PROJECT_ID}
 
       - name: Run Database Migration
@@ -100,8 +109,7 @@ jobs:
           wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
           ./cloud_sql_proxy -instances=anklohack:asia-northeast1:anklo=tcp:3306 &
-          php artisan config:clear
-          sleep 5
+          sleep 10
           php artisan migrate --force
         env:
           DB_CONNECTION: mysql
