@@ -24,7 +24,7 @@ export default function SikakuCard({
                     ジャンル: <span className="font-semibold">{genre}</span>
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
-                    弱点: <span className="font-semibold">{weakGenre}</span>
+                    {/* 弱点: <span className="font-semibold">{weakGenre}</span> */}
                 </p>
 
                 {/* 説明 */}
