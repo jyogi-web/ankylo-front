@@ -29,7 +29,7 @@ env_variables:
   # キャッシュとストレージの設定
   CACHE_DRIVER: file
   CACHE_DIRECTORY: /tmp/laravel/cache
-  APP_KEY: "__APP_KEY__"
+  APP_KEY: ${APP_KEY}
   SESSION_DRIVER: cookie
   APP_STORAGE: /tmp
   VIEW_COMPILED_PATH: /tmp/storage/framework/views

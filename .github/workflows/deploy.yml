@@ -53,6 +53,10 @@ jobs:
         run: |
           cp .env.example .env
           echo "APP_KEY=${APP_KEY}" >> .env
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=$DB_HOST" >> .env
+          echo "DB_USERNAME=$DB_USERNAME" >> .env
+          echo "DB_PASSWORD=$DB_PASSWORD" >> .env
           cp secret.yaml.example secret.yaml
           sed -i "s|__DB_PASSWORD__|${DB_PASSWORD}|g" secret.yaml
           sed -i "s|__DB_USERNAME__|${DB_USERNAME}|g" secret.yaml
