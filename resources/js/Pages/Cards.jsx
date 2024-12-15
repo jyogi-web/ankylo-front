@@ -8,7 +8,7 @@ export default function Cards() {
 
     //データを取得する関数
     useEffect(() => {
-        fetch('http://localhost/api/cards')//Laravelのエンドポイント
+        fetch('/api/cards')//Laravelのエンドポイント
             .then((response) => response.json())
             .then((data) => setUserCards(data))//データを状態に保存
             .catch((error) => console.error('Error fetching data:', error));
