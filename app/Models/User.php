@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -88,6 +89,13 @@ class User extends Authenticatable
 
     public function user_cards()
     {
-        return $this->hasMany(UserCard::class);
+        return $this->belongsToMany(Card::class,UserCard::class);
     }
+
+    public function cards()
+    {
+        // `cards` と `user_cards` の `id` の競合を避けるため、明示的にカラムを指定
+        return $this->belongsToMany(Card::class, 'user_cards', 'user_id', 'card_id');
+    }
+
 }
