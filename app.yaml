@@ -1,0 +1,53 @@
+runtime: php82
+env: standard
+
+runtime_config:
+  document_root: public
+  php_version: 8.2
+
+handlers:
+  - url: /build/(.*)
+    static_files: public/build/\1
+    upload: public/build/(.*)
+    secure: always
+  
+  - url: /(.*\.(ico|jpg|jpeg|png|gif|css|js|svg|txt|ttf|woff2))$
+    static_files: public/\1
+    upload: public/.*\.(ico|jpg|jpeg|png|gif|css|js|svg|txt|ttf|woff2)$
+    secure: always
+
+  - url: /.*
+    script: auto
+    secure: always
+
+env_variables:
+  # アプリケーション設定
+  APP_ENV: production
+  APP_DEBUG: false
+  LOG_CHANNEL: stderr
+  
+  # キャッシュとストレージの設定
+  CACHE_DRIVER: file
+  CACHE_DIRECTORY: /tmp/laravel/cache
+  APP_KEY: ${APP_KEY}
+  SESSION_DRIVER: cookie
+  APP_STORAGE: /tmp
+  VIEW_COMPILED_PATH: /tmp/storage/framework/views
+  
+  # データベース設定
+  DB_CONNECTION: mysql
+  DB_HOST: "${DB_HOST}"
+  DB_DATABASE: anklo
+  DB_USERNAME: ${DB_USERNAME}
+  DB_PASSWORD: ${DB_PASSWORD}
+  DB_SOCKET: "/cloudsql/anklohack:asia-northeast1:anklo"
+
+# インスタンス設定
+automatic_scaling:
+  min_idle_instances: automatic
+  max_pending_latency: automatic
+  max_concurrent_requests: 80
+
+# デプロイ時の設定
+build_env_variables:
+  GOOGLE_COMPOSER_VERSION: 2.2.1

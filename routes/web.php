@@ -1,6 +1,7 @@
 <?php
 
 //コントローラー
+use App\Http\Controllers\UserCardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MatchingController;
 use App\Http\Controllers\RoomController;
@@ -36,6 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/cards', function () {
         return Inertia::render('Cards');
     })->name('cards');
+
+    Route::get('api/cards',[UserCardController::class,'show']);
 
     //マッチング関係
     Route::post('/match', [MatchingController::class, 'match']);

@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('user_cards', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('card_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

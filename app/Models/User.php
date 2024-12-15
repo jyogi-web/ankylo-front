@@ -85,4 +85,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Deck::class, 'owner_id');
     }
+
+    public function user_cards()
+    {
+        return $this->hasMany(UserCard::class);
+    }
 }
