@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Response;
 use App\Models\DeckCard;
+use App\Models\MatchTurn;
 use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
@@ -180,13 +181,27 @@ class RoomController extends Controller
 
         // 勝者を判定
         $winner = null;
+        $powerDifference = abs($card1->power - $card2->power); // パワー差を計算
         if($card1->power == $card2->power){
-            $winner = 0;
+            $winner = null;
         } elseif ($card1->power > $card2->power) {
             $winner = User::find($card1->deck_id);
         } elseif ($card1->power < $card2->power) {
             $winner = User::find($card2->deck_id);
         }
+
+        \Log::info(['room_id' => $roomId,
+        'turn' => $turn,
+        'winner_user_id' => $winner->id,
+        'power_difference' => $powerDifference]);
+
+        // ターン結果を保存
+        MatchTurn::create([
+            'room_id' => $roomId,
+            'turn' => $turn,
+            'winner_user_id' => $winner->id,
+            'power_difference' => $powerDifference,
+        ]);
         
         if ($winner) {
             DB::table('rooms')
@@ -232,6 +247,15 @@ class RoomController extends Controller
         $turn = DB::table('rooms')->where('id', $roomId)->value('turn');
 
         return response()->json(['allSelected' => $allSelected,'created_by' => $created_by,'winner' => $winner,'turn' => $turn]);
+    }
+
+    public function getTurnHistory($roomId)
+    {
+        $turns = MatchTurn::where('room_id', $roomId)
+            ->orderBy('turn', 'asc')
+            ->get();
+    
+        return response()->json($turns);
     }
 
 }
