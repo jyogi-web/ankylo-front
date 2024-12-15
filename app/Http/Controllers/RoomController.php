@@ -165,12 +165,18 @@ class RoomController extends Controller
         // 勝者を判定
         $winner = null;
         if($card1->power == $card2->power){
-            $winner = 'Draw';
+            $winner = null;
         } elseif ($card1->power > $card2->power) {
-            $winner = User::find($card1->deck_id)->name;
+            $winner = User::find($card1->deck_id);
         } elseif ($card1->power < $card2->power) {
-            $winner = User::find($card2->deck_id)->name;
+            $winner = User::find($card2->deck_id);
         }
+        
+        DB::table('rooms')
+            ->where('id', $roomId)
+            ->update(['winner_user_id' => $winner->id]);
+
+        \Log::info('勝者保存',['winner',$winner->id]);        
 
         // ターンを1つ増やし、カード選択状態をリセット
         $room = Room::findOrFail($roomId);
@@ -199,7 +205,11 @@ class RoomController extends Controller
             ->where('has_selected_card', true)
             ->count() == DB::table('room_members')->where('room_id', $roomId)->count();
 
-        return response()->json(['allSelected' => $allSelected]);
+        $created_by = DB::table('rooms')->where('id', $roomId)->value('created_by');
+        $winner = DB::table('rooms')->where('id', $roomId)->value('winner_user_id');
+
+
+        return response()->json(['allSelected' => $allSelected,'created_by' => $created_by,'winner' => $winner]);
     }
 
 }

@@ -11,39 +11,51 @@ export default function BattleRoom({ room, initialUsers, user_id }) {
     const [winner, setWinner] = useState(null);
     const [cardSelected, setCardSelected] = useState(false);
 
+
+    useEffect(() => {//
+        console.log("Winner updated:", winner);
+        setCardSelected(false); // ターンが更新されたらカード選択をリセット
+        setSelectedCard(null); // 選択したカードも
+    }, [winner]);
+
+
     useEffect(() => {
         const interval = setInterval(() => {
             console.log("setInterval");
             axios.get(`/api/room/${room.id}/check-all-selected`)
                 .then(response => {
+                    setWinner(response.data.winner);
                     if (response.data.allSelected) {
                         // 全員選択済みなら判定ロジックへ
-                        handleJudge();
+                        console.log("allSelected");
+                        handleJudge(response.data.created_by);
                     }
                 })
                 .catch(error => console.error(error));
-        }, 1000); // 1秒間隔でチェック
-    
-        return () => clearInterval(interval);
-    }, [room.id]);
-    
-    const handleJudge = () => {
-        // 自分の選択したカードのデータを含めて送信
-        console.log("judge");
-        axios.post(`/api/room/${room.id}/judge`, { 
-            turn:turn
-        })
-        .then(response => {
-            if (response.data.winner) {
-                setWinner(response.data.winner); // 勝者を更新
-                setTurn(turn + 1); // ターンを進める
-                setCardSelected(false); // ターンが更新されたらカード選択をリセット
-                setSelectedCard(null); // 選択したカードもリセット
+            }, 1000); // 1秒間隔でチェック
+            
+            return () => clearInterval(interval);
+        }, [room.id]);
+        
+        const handleJudge = (created_by) => {
+            // 自分の選択したカードのデータを含めて送信
+            console.log("judge");
+            console.log('created',created_by,user_id);
+            setTurn(turn + 1); // ターンを進める
+            setCardSelected(false); // ターンが更新されたらカード選択をリセット
+            setSelectedCard(null); // 選択したカードもリセット
+            if(created_by == user_id){
+                axios.post(`/api/room/${room.id}/judge`, { 
+                    turn:turn
+                })
+                .then(response => {
+                    if (response.data.winner) {
+                    }
+                })
+                .catch(error => {
+                    console.error('Error judging turn:', error);
+                });
             }
-        })
-        .catch(error => {
-            console.error('Error judging turn:', error);
-        });
     };
     
     const handleCardSelected = (card) => {
@@ -59,6 +71,7 @@ export default function BattleRoom({ room, initialUsers, user_id }) {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <h3>Room ID: {room.id}</h3>
+                            <h4>Winner:{winner}</h4>
                             <h4>Users in this room:</h4>
                             <ul>
                                 {users.length > 0 ? (

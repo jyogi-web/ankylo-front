@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 100)->unique(); // name VARCHAR(100) UNIQUE NOT NULL
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade'); // created_by INT FOREIGN KEY users.id NOT NULL
             $table->enum('status', ['waiting', 'in_game', 'closed'])->default('waiting'); // status ENUM('waiting', 'in_game', 'closed') DEFAULT 'waiting' NOT NULL
+            $table->foreignId('winner_user_id')->nullable()->constrained('users')->onDelete('cascade'); // winner_user_id INT FOREIGN KEY users.id NULLABLE
             $table->integer('turn')->nullable(); // turn INT NULLABLE
             $table->timestamps(); // created_at と updated_at DATETIME
         });
