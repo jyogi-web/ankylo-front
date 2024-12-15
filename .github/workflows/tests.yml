@@ -30,8 +30,21 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, iconv, json, mbstring, session
+        extensions: |
+          mbstring
+          xml
+          ctype
+          iconv
+          intl
+          pdo_mysql
+          dom
+          filter
+          gd
+          json
+          session
         coverage: none
+        tools: composer:v2
+        ini-values: memory_limit=512M
         
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"

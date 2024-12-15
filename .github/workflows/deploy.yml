@@ -28,7 +28,18 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, bcmath, dom, fileinfo, json, libxml, openssl, pcre, PDO, Phar, tokenizer, xml
+          extensions: |
+            mbstring
+            xml
+            ctype
+            iconv
+            intl
+            pdo_mysql
+            dom
+            filter
+            gd
+            json
+            session
           coverage: none
           tools: composer:v2
           ini-values: memory_limit=512M
