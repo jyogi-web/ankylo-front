@@ -249,13 +249,32 @@ class RoomController extends Controller
         return response()->json(['allSelected' => $allSelected,'created_by' => $created_by,'winner' => $winner,'turn' => $turn]);
     }
 
+    //リザルトを取得
     public function getTurnHistory($roomId)
     {
+        // 指定されたroom_idのターン履歴を取得
         $turns = MatchTurn::where('room_id', $roomId)
             ->orderBy('turn', 'asc')
             ->get();
-    
-        return response()->json($turns);
+
+        // 勝者ごとのpowerDifferenceの合計を計算
+        $winnerStats = $turns->groupBy('winner_user_id')
+            ->map(function ($group) {
+                return [
+                    'total_power_difference' => $group->sum('power_difference'), // 合計のパワー差
+                    'win_count' => $group->count(), // 勝利回数
+                ];
+            });
+        \Log::info([
+            'turns' => $turns, // 全ターンの履歴
+            'winner_stats' => $winnerStats, // 勝者ごとの統計情報
+        ]);
+
+        // 結果を整形して返す
+        return response()->json([
+            'turns' => $turns, // 全ターンの履歴
+            'winner_stats' => $winnerStats, // 勝者ごとの統計情報
+        ]);
     }
 
 }

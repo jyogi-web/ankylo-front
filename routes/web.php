@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/room/{roomId}/check-all-selected', [RoomController::class, 'checkAllSelected']);
     Route::post('/api/room/{roomId}/judge', [RoomController::class, 'judge']);
     Route::post('/api/room/{roomId}/selectCard',[RoomController::class, 'selectCard']);
+    Route::get('api/room/{roomId}/result',[RoomController::class,'getTurnHistory']);
 });
 
 require __DIR__.'/auth.php';
