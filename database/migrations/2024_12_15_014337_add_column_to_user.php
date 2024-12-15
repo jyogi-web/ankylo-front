@@ -14,8 +14,8 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             // 新しいカラムを追加
-            $table->dateTime('last_pack_drawn_at')->default(DB::raw('CURRENT_TIMESTAMP'))->after('updated_at');
-            $table->unsignedInteger('available_pack_draws')->default(2)->after('last_pack_drawn_at');
+            $table->dateTime('last_pack_drawn_at')->nullable()->after('updated_at');
+            $table->unsignedInteger('available_pack_draws')->default(5)->after('last_pack_drawn_at');
         });
     }
 
