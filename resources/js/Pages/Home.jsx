@@ -64,32 +64,11 @@ export default function Home({ user, hoursRemaining }) {
                             開封する
                         </button>
 
-                        {reward && (  // reward が存在する場合のみ表示
-                            <div className="mt-4">
-                                <h4 className="text-green-500 font-bold">ガチャ結果:</h4>
-                                <div className="flex flex-wrap gap-6 justify-start">  {/* flex-wrap を調整し、justify-startで左揃えに */}
-                                    {reward.map((card) => (  // reward 配列を反復処理
-                                        <SikakuCard
-                                            key={card.id} // card.id をキーとして使用
-                                            rank={card.rank ?? "No Card Name"}
-                                            power={card.power ?? "No Power"}
-                                            title={card.name ?? "No Name"}
-                                            genre={card.type ?? "No Genre"}
-                                            weakGenre={card.type ?? "No Genre"}
-                                            description={card.description ?? "No Description"}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
                         {errorMessage && (
                             <div className="mt-4 text-red-500">
                                 <p>{errorMessage}</p>
                             </div>
                         )}
-
-
 
                         {!canDraw && (
                             <p className="text-gray-500 mt-4">
@@ -99,6 +78,25 @@ export default function Home({ user, hoursRemaining }) {
                     </div>
                 </div>
             </div>
+
+            {reward && (  // reward が存在する場合のみ表示
+                <div className="mt-8 text-center">  {/* 中央寄せ */}
+                    <h4 className="text-green-500 font-bold text-2xl mb-4">ガチャ結果:</h4>
+                    <div className="flex flex-wrap gap-6 justify-center">  {/* gap-6 と justify-center で中央に配置 */}
+                        {reward.map((card) => (  // reward 配列を反復処理
+                            <SikakuCard
+                                key={card.id} // card.id をキーとして使用
+                                rank={card.rank ?? "No Card Name"}
+                                power={card.power ?? "No Power"}
+                                title={card.name ?? "No Name"}
+                                genre={card.type ?? "No Genre"}
+                                weakGenre={card.type ?? "No Genre"}
+                                description={card.description ?? "No Description"}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     );
 }
