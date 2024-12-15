@@ -24,25 +24,28 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
 
+      - name: System Information
+        run: |
+          uname -a
+          lsb_release -a
+          php -v || true
+          
+      - name: Clear PHP Installation
+        run: |
+          sudo rm -rf /usr/local/php* || true
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common
+      
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: |
-            mbstring
-            xml
-            ctype
-            iconv
-            intl
-            pdo_mysql
-            dom
-            filter
-            gd
-            json
-            session
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, bcmath, dom, fileinfo, json, libxml, openssl, pcre, PDO, Phar, tokenizer
           coverage: none
           tools: composer:v2
           ini-values: memory_limit=512M
+        env:
+          debug: true
 
       - name: Cache Vendor
         id: cache
