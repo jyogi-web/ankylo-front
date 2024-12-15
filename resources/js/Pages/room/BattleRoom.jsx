@@ -12,11 +12,11 @@ export default function BattleRoom({ room, initialUsers, user_id }) {
     const [cardSelected, setCardSelected] = useState(false);
 
 
-    useEffect(() => {//
+    useEffect(() => {
         console.log("Winner updated:", winner);
         setCardSelected(false); // ターンが更新されたらカード選択をリセット
         setSelectedCard(null); // 選択したカードも
-    }, [winner]);
+    }, [turn]);
 
 
     useEffect(() => {
@@ -25,6 +25,7 @@ export default function BattleRoom({ room, initialUsers, user_id }) {
             axios.get(`/api/room/${room.id}/check-all-selected`)
                 .then(response => {
                     setWinner(response.data.winner);
+                    setTurn(response.data.turn);
                     if (response.data.allSelected) {
                         // 全員選択済みなら判定ロジックへ
                         console.log("allSelected");
@@ -41,7 +42,6 @@ export default function BattleRoom({ room, initialUsers, user_id }) {
             // 自分の選択したカードのデータを含めて送信
             console.log("judge");
             console.log('created',created_by,user_id);
-            setTurn(turn + 1); // ターンを進める
             setCardSelected(false); // ターンが更新されたらカード選択をリセット
             setSelectedCard(null); // 選択したカードもリセット
             if(created_by == user_id){
@@ -71,6 +71,7 @@ export default function BattleRoom({ room, initialUsers, user_id }) {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <h3>Room ID: {room.id}</h3>
+                            <h4>UserId:{user_id}</h4>
                             <h4>Winner:{winner}</h4>
                             <h4>Users in this room:</h4>
                             <ul>

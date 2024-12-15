@@ -133,15 +133,23 @@ class RoomController extends Controller
     public function judge(Request $request, $roomId)
     {
         //　roomId がString
-        $turn = $request->input('turn');
+        $turn = DB::table('rooms')->where('id', $roomId)->value('turn');
         $userId = auth()->id();
-
+        
         \Log::info('Updating has_selected_card for user', [
             'turn' => $turn,
             'room_id' => $roomId,
             'user_id' => $userId,
         ]);
         
+        DB::table('room_members')
+            ->where('room_id', $roomId)
+            ->update(['has_selected_card' => false]);
+
+        \Log::info('カード選択更新', [
+            'position' => $turn,
+        ]);
+            
         // 現在のターンに出されている2つのカードを取得
         $cards = DB::table('deck_cards')
             ->join('cards', 'deck_cards.card_id', '=', 'cards.id')
@@ -152,41 +160,49 @@ class RoomController extends Controller
         \Log::info('カード取得後',['cards',$cards]);
         // [2024-12-14 16:40:52] local.INFO: カード取得後 ["cards",{"Illuminate\\Support\\Collection":[]}] 
 
-
+        // カード数が不足している場合のエラーハンドリング
         if ($cards->count() < 2) {
-            return response()->json(['error' => 'Insufficient cards for judgment'], 400);
+            \Log::error('必要なカードが不足しています。現在のカード数:', ['count' => $cards->count()]);
+            return response()->json(['error' => '必要なカードが不足しています'], 400);
         }
 
         $card1 = $cards[0];
         $card2 = $cards[1];
+        \Log::info(['card1'=>$card1,'card2'=>$card2]);
 
         \Log::info('判定前まで');
 
         // 勝者を判定
         $winner = null;
         if($card1->power == $card2->power){
-            $winner = null;
+            $winner = 0;
         } elseif ($card1->power > $card2->power) {
             $winner = User::find($card1->deck_id);
         } elseif ($card1->power < $card2->power) {
             $winner = User::find($card2->deck_id);
         }
         
-        DB::table('rooms')
-            ->where('id', $roomId)
-            ->update(['winner_user_id' => $winner->id]);
-
-        \Log::info('勝者保存',['winner',$winner->id]);        
+        if ($winner) {
+            DB::table('rooms')
+                ->where('id', $roomId)
+                ->update(['winner_user_id' => $winner->id]);
+    
+            \Log::info('勝者保存', ['winner' => $winner->id]);
+        } else {
+            DB::table('rooms')
+                ->where('id', $roomId)
+                ->update(['winner_user_id' => null]);
+            \Log::info('引き分け');
+        }  
 
         // ターンを1つ増やし、カード選択状態をリセット
         $room = Room::findOrFail($roomId);
         $room->turn += 1;
         $room->save();
 
-        DB::table('room_members')
-            ->where('room_id', $roomId)
-            ->update(['has_selected_card' => false]);
 
+        \Log::info('judge終了');        
+        
         return response()->json(['winner' => $winner]);
     }
     
@@ -207,9 +223,9 @@ class RoomController extends Controller
 
         $created_by = DB::table('rooms')->where('id', $roomId)->value('created_by');
         $winner = DB::table('rooms')->where('id', $roomId)->value('winner_user_id');
+        $turn = DB::table('rooms')->where('id', $roomId)->value('turn');
 
-
-        return response()->json(['allSelected' => $allSelected,'created_by' => $created_by,'winner' => $winner]);
+        return response()->json(['allSelected' => $allSelected,'created_by' => $created_by,'winner' => $winner,'turn' => $turn]);
     }
 
 }
