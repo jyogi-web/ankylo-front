@@ -21,6 +21,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-app.yaml
 cloud-sql-proxy
 cloudsql/
+gha-creds-*.json
+

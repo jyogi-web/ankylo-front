@@ -1,0 +1,76 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: 'projects/1047716133398/locations/global/workloadIdentityPools/github-actions-pool'
+          service_account: 'github-actions@anklohack.iam.gserviceaccount.com'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Cache Vendor
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ./vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Deploy to App Engine
+        env:
+          CI: true
+          PROJECT_ID: anklohack
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          APP_KEY: ${{ secrets.APP_KEY }}
+        run: |
+          cp .env.example .env
+          cp secret.yaml.example secret.yaml
+          sed -i -e "s/__DB_PASSWORD__/$DB_PASSWORD/" secret.yaml
+          sed -i -e "s/__DB_USERNAME__/$DB_USERNAME/" secret.yaml
+          sed -i -e "s/__DB_HOST__/$DB_HOST/" secret.yaml
+          sed -i -e "s/__APP_KEY__/$APP_KEY/" secret.yaml
+          gcloud app deploy app.yaml --quiet --no-cache --project ${PROJECT_ID}
+
+      - name: Run Database Migration
+        run: |
+          wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+          chmod +x cloud_sql_proxy
+          ./cloud_sql_proxy -instances=anklohack:asia-northeast1:anklo=tcp:3306 &
+          php artisan config:clear
+          sleep 5
+          php artisan migrate --force
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: anklo
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
