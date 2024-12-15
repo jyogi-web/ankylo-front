@@ -114,6 +114,12 @@ export default function BattleRoom({ room, initialUsers, user_id }) {
                                     <h4>試合結果</h4>
                                     <p>勝者: {overallWinner}</p>
                                     <p>パワー差合計: {totalPowerDifference}</p>
+                                    {/* パワー差合計が50以上の場合の追加表示 */}
+                                    {totalPowerDifference >= 50 && (
+                                        <>                                        <p className="text-green-500 font-bold">マウントの取りすぎ！</p>
+                                            <p className='text-red-500 font-bold'>人間失格！！！！</p>
+                                        </>
+                                    )}
                                     <p>勝利回数: {winnerStats.win_count}</p>
                                 </div>
                                 //ここに戻るボタン
