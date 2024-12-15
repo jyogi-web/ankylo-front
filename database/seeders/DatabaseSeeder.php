@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             CardSeeder::class,
             DeckSeeder::class,
             DeckCardSeeder::class,
+            UserSeeder::class,
+            UserCardSeeder::class,
         ]);
     }
 
