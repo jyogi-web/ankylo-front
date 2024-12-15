@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Response;
 use App\Models\DeckCard;
+use App\Models\MatchTurn;
 use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
@@ -53,6 +54,12 @@ class RoomController extends Controller
 
             // 既に他のルームに参加している場合、その情報を削除
             RoomMember::where('user_id', $userId)->delete();
+            
+            //roomのステートを確認してin_gameだったらbattleに戻る
+            if($room->status == 'in_game'){
+                return Inertia::location(route('battle'));
+            }
+
 
             // DeckCardsテーブルのpositionカラムをnullで初期化する
             DB::table('deck_cards')
@@ -174,13 +181,27 @@ class RoomController extends Controller
 
         // 勝者を判定
         $winner = null;
+        $powerDifference = abs($card1->power - $card2->power); // パワー差を計算
         if($card1->power == $card2->power){
-            $winner = 0;
+            $winner = null;
         } elseif ($card1->power > $card2->power) {
             $winner = User::find($card1->deck_id);
         } elseif ($card1->power < $card2->power) {
             $winner = User::find($card2->deck_id);
         }
+
+        \Log::info(['room_id' => $roomId,
+        'turn' => $turn,
+        'winner_user_id' => $winner->id,
+        'power_difference' => $powerDifference]);
+
+        // ターン結果を保存
+        MatchTurn::create([
+            'room_id' => $roomId,
+            'turn' => $turn,
+            'winner_user_id' => $winner->id,
+            'power_difference' => $powerDifference,
+        ]);
         
         if ($winner) {
             DB::table('rooms')
@@ -226,6 +247,34 @@ class RoomController extends Controller
         $turn = DB::table('rooms')->where('id', $roomId)->value('turn');
 
         return response()->json(['allSelected' => $allSelected,'created_by' => $created_by,'winner' => $winner,'turn' => $turn]);
+    }
+
+    //リザルトを取得
+    public function getTurnHistory($roomId)
+    {
+        // 指定されたroom_idのターン履歴を取得
+        $turns = MatchTurn::where('room_id', $roomId)
+            ->orderBy('turn', 'asc')
+            ->get();
+
+        // 勝者ごとのpowerDifferenceの合計を計算
+        $winnerStats = $turns->groupBy('winner_user_id')
+            ->map(function ($group) {
+                return [
+                    'total_power_difference' => $group->sum('power_difference'), // 合計のパワー差
+                    'win_count' => $group->count(), // 勝利回数
+                ];
+            });
+        \Log::info([
+            'turns' => $turns, // 全ターンの履歴
+            'winner_stats' => $winnerStats, // 勝者ごとの統計情報
+        ]);
+
+        // 結果を整形して返す
+        return response()->json([
+            'turns' => $turns, // 全ターンの履歴
+            'winner_stats' => $winnerStats, // 勝者ごとの統計情報
+        ]);
     }
 
 }
