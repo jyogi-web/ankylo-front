@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Card;
+use App\Models\UserCard;
+
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -22,12 +25,26 @@ class PackController extends Controller
         $user->decrement('available_pack_draws');
         $user->update(['last_pack_drawn_at' => now()]);
 
+        //ユーザーが所有していないカードを取得
+        $ownedCardIds = $user->cards()->pluck('cards.id')->toArray();
+
+        //ランダム五枚選択
+        $cards=Card::whereNotIn('id',$ownedCardIds)->inRandomOrder()->limit(5)->get();
+
+        //選ばれたカードをuser_cardsに登録
+        foreach($cards as $card){
+            UserCard::create([
+                'user_id'=>$user->id,
+                'card_id'=>$card->id,
+            ]);
+        }
         // ダミーの結果
-        $reward = ['name' => 'レアカード', 'rarity' => 'SSR'];
+        //$reward = ['name' => 'レアカード', 'rarity' => 'SSR'];
 
         return response()->json([
-            'reward' => $reward,
+            // 'reward' => $reward,
             'available_pack_draws'=>$user->available_pack_draws,
+            'cards'=>$cards,
         ]);
     }
 

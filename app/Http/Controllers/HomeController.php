@@ -11,7 +11,7 @@ use Carbon\Carbon;
 class HomeController extends Controller
 {
     // ガチャの間隔（時間単位）
-    private $gacha_interval = 0.5; // 12時間間隔でガチャを引けるように設定
+    private $gacha_interval = 12; // 12時間間隔でガチャを引けるように設定
 
     public function index()
     {
@@ -36,6 +36,9 @@ class HomeController extends Controller
             $this->updatePackDrawCount($user); // ガチャ回数を更新
             $hoursRemaining = 0; // 経過しているため、待機時間は0
         }
+
+        // 小数点1桁で表示するために丸める
+        $hoursRemaining = round($hoursRemaining, 1);
 
         return inertia('Home', [
             'user' => $user,
